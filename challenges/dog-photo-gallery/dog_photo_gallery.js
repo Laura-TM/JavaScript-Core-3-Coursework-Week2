@@ -1,12 +1,22 @@
-let buttonHolder = document.getElementsByTagName("main")[0];
-let imageHolder = document.getElementsByTagName("section")[0];
+function setUp() {
+  let buttonHolder = document.getElementsByTagName("main")[0];
 
-let buttonOne = document.createElement("button");
-buttonOne.classList.add("button");
-buttonOne.innerHTML = "Add more";
-buttonHolder.appendChild(buttonOne);
+  let addButton = document.createElement("button");
+  addButton.classList.add("button");
+  addButton.innerHTML = "Add more";
+  buttonHolder.appendChild(addButton);
 
-function getDogImage() {
+  addButton.addEventListener("click", getDogImage);
+
+  let deleteButton = document.createElement("button");
+  deleteButton.classList.add("button");
+  deleteButton.innerHTML = "Clear all";
+  buttonHolder.appendChild(deleteButton);
+
+  deleteButton.addEventListener("click", deleteAllImages);
+}
+
+const getDogImage = () => {
   fetch("https://dog.ceo/api/breeds/image/random")
     .then(function (response) {
       if (response.status >= 200 && response.status <= 299) {
@@ -16,33 +26,30 @@ function getDogImage() {
       }
     })
     .then(function (data) {
-      console.log(data);
-
-      let unorderedList = document.createElement("ul");
-      unorderedList.classList.add("ul");
-      imageHolder.appendChild(unorderedList);
-
-      let liElement = document.createElement("li");
-      liElement.classList.add("li");
-      unorderedList.appendChild(liElement);
-
-      let image = document.createElement("img");
-      image.src = data.message;
-      image.classList.add("image");
-      liElement.appendChild(image);
-      data.message++;
+      createDogImage(data);
     })
     .catch((error) => {
       console.error("Error:", error);
     });
-}
+};
 
-buttonOne.addEventListener("click", getDogImage);
+const createDogImage = (data) => {
+  let imageHolder = document.getElementsByTagName("section")[0];
 
-let buttonTwo = document.createElement("button");
-buttonTwo.classList.add("button");
-buttonTwo.innerHTML = "Clear all";
-buttonHolder.appendChild(buttonTwo);
+  let unorderedList = document.createElement("ul");
+  unorderedList.classList.add("ul");
+  imageHolder.appendChild(unorderedList);
+
+  let liElement = document.createElement("li");
+  liElement.classList.add("li");
+  unorderedList.appendChild(liElement);
+
+  let image = document.createElement("img");
+  image.src = data.message;
+  image.classList.add("image");
+  liElement.appendChild(image);
+  data.message++;
+};
 
 function deleteAllImages() {
   let allLiElements = document.getElementsByTagName("li");
@@ -52,4 +59,4 @@ function deleteAllImages() {
   }
 }
 
-buttonTwo.addEventListener("click", deleteAllImages);
+window.onload = setUp;
